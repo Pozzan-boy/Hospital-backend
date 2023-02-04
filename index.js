@@ -2,6 +2,7 @@ import express from 'express';
 import jwt from 'jsonwebtoken';
 import mongoose from 'mongoose';
 import bcrypt from 'bcrypt';
+import cors from 'cors';
 import UserModel from './models/User.js';
 
 mongoose
@@ -12,6 +13,7 @@ mongoose
 const app = express();
 
 app.use(express.json());
+app.use(cors());
 
 app.get('/', (req, res) => {
     res.send('Hello World');
@@ -36,7 +38,8 @@ app.post('/auth/login', async (req, res) => {
 
         const token = jwt.sign(
             {
-                _id: user._id
+                _id: user._id,
+                status: 'succes'
             },
             'pass123',
             {
