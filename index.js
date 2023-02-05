@@ -21,7 +21,7 @@ app.get('/', (req, res) => {
 
 app.post('/auth/login', async (req, res) => {
     try {
-        const user = await UserModel.findOne({login: req.body.login});
+        const user = await UserModel.findOne({login: req.body.login, role: req.body.role});
         if (!user) {
             return res.status(404).json({
                 message: 'Login fail'
