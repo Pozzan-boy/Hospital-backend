@@ -1,9 +1,10 @@
 import express from 'express';
-import jwt from 'jsonwebtoken';
-import mongoose from 'mongoose';
-import bcrypt from 'bcrypt';
 import cors from 'cors';
-import UserModel from './models/User.js';
+import mongoose from 'mongoose';
+
+import * as UserController from './controllers/UserController.js';
+import * as DoctorController from './controllers/DoctorController.js';
+import checkAuth from './utils/checkAuth.js';
 
 mongoose
     .connect('mongodb+srv://admin:1q2w3e4r@cluster0.x48lxgt.mongodb.net/hospital?retryWrites=true&w=majority')
@@ -19,51 +20,13 @@ app.get('/', (req, res) => {
     res.send('Hello World');
 });
 
-app.post('/auth/login', async (req, res) => {
-    try {
-        const user = await UserModel.findOne({login: req.body.login, role: req.body.role});
-        if (!user) {
-            return res.status(404).json({
-                message: 'Login fail'
-            });
-        }
+app.post('/auth/login', UserController.login);
 
-        const isValidPass = await bcrypt.compare(req.body.password, user._doc.passwordHash);
+app.get('/doctor/getAllDoctors', checkAuth, DoctorController.getAllDoctors);
 
-        if(!isValidPass) {
-            return res.status(404).json({
-                message: 'Login fail'
-            });
-        }
+// app.post('/auth/register/doctor', (req, res) => {
 
-        const token = jwt.sign(
-            {
-                _id: user._id,
-                status: 'succes'
-            },
-            'pass123',
-            {
-                expiresIn: '30d'
-            }
-        );
-
-        const {passwordHash, ...userData} = user._doc;
-
-        res.json({
-            ...userData,
-            token
-        });
-
-    } catch (err) {
-        res.status(500).json({
-            message: 'Login fail'
-        });
-    }
-});
-
-app.post('/auth/register/doctor', (req, res) => {
-
-});
+// });
 
 app.listen(3001, (err) => {
     if (err) {
