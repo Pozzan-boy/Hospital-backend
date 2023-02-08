@@ -1,5 +1,4 @@
 import DoctorModel from '../models/Doctor.js';
-import { addDoctorValidator } from '../validations/doctorValidation.js';
 import { validationResult } from 'express-validator';
 
 export const getAllDoctors = async (req, res) => {
