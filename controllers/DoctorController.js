@@ -46,7 +46,7 @@ export const addDoctor = async (req, res) => {
         const speciality = req.body.speciality;
         const entryDate = req.body.entryDate;
         const salary = req.body.salary;
-        const email = req.body?.salary;
+        const email = req.body?.email;
         const phone = req.body?.phone;
 
         const doc = new DoctorModel({
