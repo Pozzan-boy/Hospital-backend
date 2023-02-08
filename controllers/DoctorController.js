@@ -9,7 +9,7 @@ export const getAllDoctors = async (req, res) => {
             });
         }
 
-        const doctors = await DoctorModel.find();
+        const doctors = await DoctorModel.find().limit(req.headers.count);
 
         if(doctors != null && doctors.length > 0) {
             return res.status(200).json(doctors);
