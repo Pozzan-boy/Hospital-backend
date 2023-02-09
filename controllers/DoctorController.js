@@ -69,3 +69,119 @@ export const addDoctor = async (req, res) => {
         });
     }
 }
+
+export const getDoctor = async (req, res) => {
+    try {
+        if(req.role !== 'admin' && req.role !== 'doctor') {
+            return res.status(403).json({
+                message: 'Access denied!'
+            });
+        }
+
+        const doctorId = req.params.id;
+
+        const doctor = await DoctorModel.findById(doctorId);
+        if(!doctor) {
+            return res.status(404).json({
+                message: 'Doctor not found'
+            });
+        }
+
+        return res.json(doctor);
+
+    } catch(err) {
+        res.status(500).json({
+            message: 'Error'
+        });
+    }
+}
+
+export const editDoctor = async (req, res) => {
+    try {
+        if(req.role !== 'admin' && req.role !== 'doctor') {
+            return res.status(403).json({
+                message: 'Access denied!'
+            });
+        }
+
+        const errors = validationResult(req);
+        if(!errors.isEmpty()) {
+            return res.status(400).json(errors.array());
+        }
+
+        const doctorId = req.params.id;
+
+        DoctorModel.findOneAndUpdate(
+            {
+                _id: doctorId
+            },
+            {
+                ...req.body
+            },
+            {
+                returnDocument: 'after'
+            },
+            (err, doc) => {
+                if(err) {
+                    return res.status(500).json({
+                        message: 'Error'
+                    });
+                }
+
+                if(!doc) {
+                    return res.status(404).json({
+                        message: 'Doctor not found'
+                    });
+                }
+
+                res.json(doc);
+            }
+        );
+
+    } catch(err) {
+        res.status(500).json({
+            message: 'Error'
+        });
+    }
+}
+
+export const deleteDoctor = async (req, res) => {
+
+    try {
+        if(req.role !== 'admin') {
+            return res.status(403).json({
+                message: 'Access denied!'
+            });
+        }
+
+        const doctorId = req.params.id;
+
+        DoctorModel.findOneAndDelete(
+            {
+                _id: doctorId
+            },
+            (err, doc) => {
+                if(err) {
+                    return res.status(500).json({
+                        message: 'Error'
+                    });
+                }
+
+                if(!doc) {
+                    return res.status(404).json({
+                        message: 'Doctor not found'
+                    });
+                }
+
+                res.json({
+                    succes: true
+                });
+            }
+        );
+
+    } catch(err) {
+        res.status(500).json({
+            message: 'Error'
+        });
+    }
+}

@@ -10,3 +10,14 @@ export const addDoctorValidator = [
     body('email').optional().isEmail(),
     body('phone').optional().isMobilePhone()
 ];
+
+export const editDoctorValidator = [
+    body('name').optional().isString().isLength({ min: 3 }),
+    body('surname').optional().isString().isLength({ min: 3 }),
+    body('age').optional().isNumeric(),
+    body('speciality').optional().isString(),
+    body('entryDate').optional().isString(),
+    body('salary').optional().isNumeric(),
+    body('email').optional().isEmail(),
+    body('phone').optional().isMobilePhone()
+]

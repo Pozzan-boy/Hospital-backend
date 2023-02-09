@@ -5,7 +5,7 @@ import mongoose from 'mongoose';
 import * as UserController from './controllers/UserController.js';
 import * as DoctorController from './controllers/DoctorController.js';
 import checkAuth from './utils/checkAuth.js';
-import { addDoctorValidator } from './validations/doctorValidation.js';
+import { addDoctorValidator, editDoctorValidator } from './validations/doctorValidation.js';
 
 mongoose
     .connect('mongodb+srv://admin:1q2w3e4r@cluster0.x48lxgt.mongodb.net/hospital?retryWrites=true&w=majority')
@@ -26,6 +26,12 @@ app.post('/auth/login', UserController.login);
 app.get('/doctor/getAllDoctors', checkAuth, DoctorController.getAllDoctors);
 
 app.post('/doctor/add', checkAuth, addDoctorValidator, DoctorController.addDoctor);
+
+app.get('/doctor/:id', checkAuth, DoctorController.getDoctor);
+
+app.put('/doctor/edit/:id', checkAuth, editDoctorValidator, DoctorController.editDoctor);
+
+app.delete('/doctor/delete/:id', checkAuth, DoctorController.deleteDoctor);
 
 // app.post('/auth/register/doctor', (req, res) => {
 
