@@ -99,8 +99,10 @@ export const doctorRegister = async (req, res) => {
         });
 
         const user = await doc.save();
-
-        res.json(user);
+        
+        res.status(200).json({
+            message: 'Success'
+        });
 
     } catch (err) {
         res.status(500).json({
