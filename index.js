@@ -36,6 +36,10 @@ app.delete('/doctor/delete/:id', checkAuth, DoctorController.deleteDoctor);
 
 app.post('/auth/register/doctor', checkAuth, doctorRegisterValidator, UserController.doctorRegister);
 
+app.put('/doctor/updateAccount/:key', checkAuth, UserController.updateDoctorAccount);
+
+app.get('/doctor/checkAccount/:key', checkAuth, UserController.checkDoctorAccount);
+
 app.listen(3001, (err) => {
     if (err) {
         return console.log(err);        
