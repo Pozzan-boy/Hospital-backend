@@ -173,9 +173,7 @@ export const deleteDoctor = async (req, res) => {
                     });
                 }
 
-                res.json({
-                    succes: true
-                });
+                res.json(doc);
             }
         );
 
