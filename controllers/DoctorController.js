@@ -183,3 +183,47 @@ export const deleteDoctor = async (req, res) => {
         });
     }
 }
+
+export const deleteManyDoctors = async (req, res) => {
+    
+    try {
+        if(req.role !== 'admin') {
+            return res.status(403).json({
+                message: 'Access denied!'
+            });
+        }
+        
+        const doctorsId = req.body.doctors;
+        console.log(doctorsId);
+        
+        DoctorModel.deleteMany(
+            {
+                _id: {
+                    $in: doctorsId
+                }
+            },
+            (err, doc) => {
+                if(err) {
+                    console.log(err);
+                    return res.status(500).json({
+                        message: 'Error'
+                    });
+                }
+
+                if(doc.deletedCount === 0) {
+                    return res.status(404).json({
+                        message: 'Doctors not found'
+                    });
+                }
+
+                res.json(doc);
+            }
+        );
+
+    } catch(err) {
+        console.log(err);
+        res.status(500).json({
+            message: 'Error'
+        });
+    }
+}
