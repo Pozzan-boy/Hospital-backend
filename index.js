@@ -34,6 +34,8 @@ app.put('/doctor/edit/:id', checkAuth, editDoctorValidator, DoctorController.edi
 
 app.delete('/doctor/delete/:id', checkAuth, DoctorController.deleteDoctor);
 
+app.delete('/doctor/deleteMany', checkAuth, DoctorController.deleteManyDoctors);
+
 app.post('/auth/register/doctor', checkAuth, doctorRegisterValidator, UserController.doctorRegister);
 
 app.put('/doctor/updateAccount/:key', checkAuth, UserController.updateDoctorAccount);
