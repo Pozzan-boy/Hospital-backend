@@ -1,22 +1,23 @@
-import DoctorModel from '../models/Doctor.js';
+import PatientModel from '../models/Patient.js';
 import { validationResult } from 'express-validator';
 
-export const getAllDoctors = async (req, res) => {
+export const getAllPatients = async (req, res) => {
     try {
-        if(req.role !== 'admin') {
+        if (req.role !== 'admin' && req.role !== 'doctor') {
             return res.status(403).json({
                 message: 'Access denied!'
             });
         }
 
-        const doctors = await DoctorModel.find().skip(req.headers.from).limit(req.headers.count);
+        const patients = await PatientModel.find().skip(req.headers.from).limit(req.headers.count);
 
-        if(doctors != null && doctors.length > 0) {
-            return res.status(200).json(doctors);
+        if (patients != null && patients.length > 0) {
+            return res.status(200).json(patients);
         }
         return res.status(404).json({
-            message: 'Doctors not found'
+            message: 'Patients not found'
         });
+
     } catch (err) {
         res.status(500).json({
             message: 'Error'
@@ -24,10 +25,8 @@ export const getAllDoctors = async (req, res) => {
     }
 }
 
-export const addDoctor = async (req, res) => {
-
+export const addPtient = async (req, res) => {
     try {
-
         if(req.role !== 'admin') {
             return res.status(403).json({
                 message: 'Access denied!'
@@ -41,27 +40,27 @@ export const addDoctor = async (req, res) => {
 
         const name = req.body.name;
         const surname = req.body.surname;
-        const age = req.body.age;
-        const speciality = req.body.speciality;
-        const entryDate = req.body.entryDate;
-        const salary = req.body.salary;
+        const birthDate = req.body.birthDate;
+        const sex = req.body.sex;
+        const height = req.body.height;
+        const weight = req.body.weight;
         const email = req.body?.email;
         const phone = req.body?.phone;
 
-        const doc = new DoctorModel({
+        const doc = new PatientModel({
             name,
             surname,
-            age,
-            speciality,
-            entryDate,
-            salary,
+            birthDate,
+            sex,
+            height,
+            weight,
             email,
             phone
         })
 
-        const doctor = await doc.save();
+        const patient = await doc.save();
 
-        res.json(doctor); 
+        res.json(patient);
 
     } catch(err) {
         res.status(500).json({
@@ -70,24 +69,24 @@ export const addDoctor = async (req, res) => {
     }
 }
 
-export const getDoctor = async (req, res) => {
+export const getPatient = async (req, res) => {
     try {
-        if(req.role !== 'admin' && req.role !== 'doctor') {
+        if(req.role !== 'admin' && req.role !== 'patient' && req.role !== 'doctor') {
             return res.status(403).json({
                 message: 'Access denied!'
             });
         }
 
-        const doctorId = req.params.id;
+        const patientId = req.params.id;
 
-        const doctor = await DoctorModel.findById(doctorId);
-        if(!doctor) {
+        const patient = await PatientModel.findById(patientId);
+        if (!patient) {
             return res.status(404).json({
-                message: 'Doctor not found'
+                message: 'Patient not found'
             });
         }
 
-        return res.json(doctor);
+        return res.json(patient);
 
     } catch(err) {
         res.status(500).json({
@@ -96,9 +95,9 @@ export const getDoctor = async (req, res) => {
     }
 }
 
-export const editDoctor = async (req, res) => {
+export const editPatient = async (req, res) => {
     try {
-        if(req.role !== 'admin' && req.role !== 'doctor') {
+        if(req.role !== 'admin' && req.role !== 'doctor' && req.role !== 'patient') {
             return res.status(403).json({
                 message: 'Access denied!'
             });
@@ -109,11 +108,11 @@ export const editDoctor = async (req, res) => {
             return res.status(400).json(errors.array());
         }
 
-        const doctorId = req.params.id;
+        const patientId = req.params.id;
 
-        DoctorModel.findOneAndUpdate(
+        PatientModel.findOneAndUpdate(
             {
-                _id: doctorId
+                _id: patientId
             },
             {
                 ...req.body
@@ -130,13 +129,13 @@ export const editDoctor = async (req, res) => {
 
                 if(!doc) {
                     return res.status(404).json({
-                        message: 'Doctor not found'
+                        message: 'Patient not found'
                     });
                 }
 
                 res.json(doc);
             }
-        );
+        )
 
     } catch(err) {
         res.status(500).json({
@@ -145,20 +144,19 @@ export const editDoctor = async (req, res) => {
     }
 }
 
-export const deleteDoctor = async (req, res) => {
-
+export const deletePatient = async (req, res) => {
     try {
-        if(req.role !== 'admin') {
+        if(req.role !== 'admin' && req.role !== 'doctor') {
             return res.status(403).json({
                 message: 'Access denied!'
             });
         }
 
-        const doctorId = req.params.id;
+        const patientId = req.params.id;
 
-        DoctorModel.findOneAndDelete(
+        PatientModel.findOneAndDelete(
             {
-                _id: doctorId
+                _id: patientId
             },
             (err, doc) => {
                 if(err) {
@@ -169,13 +167,13 @@ export const deleteDoctor = async (req, res) => {
 
                 if(!doc) {
                     return res.status(404).json({
-                        message: 'Doctor not found'
+                        message: 'Ptient not found'
                     });
                 }
 
                 res.json(doc);
             }
-        );
+        )
 
     } catch(err) {
         res.status(500).json({
@@ -184,21 +182,20 @@ export const deleteDoctor = async (req, res) => {
     }
 }
 
-export const deleteManyDoctors = async (req, res) => {
-    
+export const deleteManyPatients = async (req, res) => {
     try {
-        if(req.role !== 'admin') {
+        if(req.role !== 'admin' && req.role !== 'doctor') {
             return res.status(403).json({
                 message: 'Access denied!'
             });
         }
-        
-        const doctorsId = req.body.doctors;
-        
-        DoctorModel.deleteMany(
+
+        const patientsId = req.body.patients;
+
+        PatientModel.deleteMany(
             {
                 _id: {
-                    $in: doctorsId
+                    $in: patientsId
                 }
             },
             (err, doc) => {
@@ -211,7 +208,7 @@ export const deleteManyDoctors = async (req, res) => {
 
                 if(doc.deletedCount === 0) {
                     return res.status(404).json({
-                        message: 'Doctors not found'
+                        message: 'Patients not found'
                     });
                 }
 

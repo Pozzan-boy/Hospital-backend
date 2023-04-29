@@ -4,9 +4,11 @@ import mongoose from 'mongoose';
 
 import * as UserController from './controllers/UserController.js';
 import * as DoctorController from './controllers/DoctorController.js';
+import * as PatientController from './controllers/PatientController.js';
 import checkAuth from './utils/checkAuth.js';
 import { addDoctorValidator, editDoctorValidator } from './validations/doctorValidation.js';
-import { doctorRegisterValidator } from './validations/auth.js';
+import { doctorRegisterValidator, patientRegisterValidator } from './validations/auth.js';
+import { addPatientValidator, editPatientValidator } from './validations/patientValidation.js';
 
 mongoose
     .connect('mongodb+srv://admin:1q2w3e4r@cluster0.x48lxgt.mongodb.net/hospital?retryWrites=true&w=majority')
@@ -23,6 +25,9 @@ app.get('/', (req, res) => {
 });
 
 app.post('/auth/login', UserController.login);
+
+
+//======================Doctor===========================
 
 app.get('/doctor/getAllDoctors', checkAuth, DoctorController.getAllDoctors);
 
@@ -41,6 +46,27 @@ app.post('/auth/register/doctor', checkAuth, doctorRegisterValidator, UserContro
 app.put('/doctor/updateAccount/:key', checkAuth, UserController.updateDoctorAccount);
 
 app.get('/doctor/checkAccount/:key', checkAuth, UserController.checkDoctorAccount);
+
+
+//=====================Patient===========================
+
+app.get('/patient/getAllPatients', checkAuth, PatientController.getAllPatients);
+
+app.post('/patient/add', checkAuth, addPatientValidator, PatientController.addPtient);
+
+app.get('/patient/:id', checkAuth, PatientController.getPatient);
+
+app.put('/patient/edit/:id', checkAuth, editPatientValidator, PatientController.editPatient);
+
+app.delete('/patient/delete/:id', checkAuth, PatientController.deletePatient);
+
+app.delete('/patient/deleteMany', checkAuth, PatientController.deleteManyPatients);
+
+app.post('/auth/register/patient', checkAuth, patientRegisterValidator, UserController.patientRegister);
+
+app.put('/patient/updateAccount/:key', checkAuth, UserController.updatePatientAccount);
+
+app.get('/patient/checkAccount/:key', checkAuth, UserController.checkPatientAccount);
 
 app.listen(3001, (err) => {
     if (err) {
