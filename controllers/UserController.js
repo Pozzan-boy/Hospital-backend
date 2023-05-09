@@ -44,7 +44,8 @@ export const login = async (req, res) => {
             {
                 _id: user._id,
                 status: 'succes',
-                role: user.role
+                role: user.role,
+                key: user.key
             },
             'pass123',
             {
@@ -229,8 +230,9 @@ export const patientRegister = async (req, res) => {
             message: 'Success'
         });
     } catch (err) {
+        console.log(err);
         res.status(500).json({
-            message: 'Doctor register error',
+            message: 'Patient register error',
         });
     }
 }

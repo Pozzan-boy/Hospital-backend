@@ -5,10 +5,12 @@ import mongoose from 'mongoose';
 import * as UserController from './controllers/UserController.js';
 import * as DoctorController from './controllers/DoctorController.js';
 import * as PatientController from './controllers/PatientController.js';
+import * as WardController from './controllers/WardController.js';
 import checkAuth from './utils/checkAuth.js';
 import { addDoctorValidator, editDoctorValidator } from './validations/doctorValidation.js';
 import { doctorRegisterValidator, patientRegisterValidator } from './validations/auth.js';
 import { addPatientValidator, editPatientValidator } from './validations/patientValidation.js';
+import { addWardValidator, editWardValidator} from './validations/wardValidtion.js';
 
 mongoose
     .connect('mongodb+srv://admin:1q2w3e4r@cluster0.x48lxgt.mongodb.net/hospital?retryWrites=true&w=majority')
@@ -54,6 +56,8 @@ app.get('/patient/getAllPatients', checkAuth, PatientController.getAllPatients);
 
 app.post('/patient/add', checkAuth, addPatientValidator, PatientController.addPtient);
 
+app.get('/patient/getInfo', checkAuth, PatientController.getMyInfo);
+
 app.get('/patient/:id', checkAuth, PatientController.getPatient);
 
 app.put('/patient/edit/:id', checkAuth, editPatientValidator, PatientController.editPatient);
@@ -67,6 +71,22 @@ app.post('/auth/register/patient', checkAuth, patientRegisterValidator, UserCont
 app.put('/patient/updateAccount/:key', checkAuth, UserController.updatePatientAccount);
 
 app.get('/patient/checkAccount/:key', checkAuth, UserController.checkPatientAccount);
+
+
+//====================Ward======================
+
+app.get('/ward/getAllWards', checkAuth, WardController.getAllWards);
+
+app.post('/ward/add', checkAuth, addWardValidator, WardController.addWard);
+
+app.get('/ward/:id', checkAuth, WardController.getWard);
+
+app.put('/ward/edit/:id', checkAuth, editWardValidator);
+
+app.delete('/ward/delete/:id', checkAuth, WardController.deleteWard);
+
+app.delete('/ward/deleteMany', checkAuth, WardController.deleteManyWards);
+
 
 app.listen(3001, (err) => {
     if (err) {

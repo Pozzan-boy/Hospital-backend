@@ -1,7 +1,8 @@
-import PatientModel from '../models/Patient.js';
+import WardModel from '../models/Ward.js';
+import DoctorModel from '../models/Doctor.js';
 import { validationResult } from 'express-validator';
 
-export const getAllPatients = async (req, res) => {
+export const getAllWards = async (req, res) => {
     try {
         if (req.role !== 'admin' && req.role !== 'doctor') {
             return res.status(403).json({
@@ -9,13 +10,13 @@ export const getAllPatients = async (req, res) => {
             });
         }
 
-        const patients = await PatientModel.find().skip(req.headers.from).limit(req.headers.count);
+        const wards = await WardModel.find().skip(req.headers.from).limit(req.headers.count);
 
-        if (patients != null && patients.length > 0) {
-            return res.status(200).json(patients);
+        if (wards != null && wards.length > 0) {
+            return res.status(200).json(wards);
         }
         return res.status(404).json({
-            message: 'Patients not found'
+            message: 'Wards not found'
         });
 
     } catch (err) {
@@ -25,7 +26,7 @@ export const getAllPatients = async (req, res) => {
     }
 }
 
-export const addPatient = async (req, res) => {
+export const addWard = async (req, res) => {
     try {
         if(req.role !== 'admin') {
             return res.status(403).json({
@@ -38,82 +39,34 @@ export const addPatient = async (req, res) => {
             return res.status(400).json(errors.array());
         }
 
-        const name = req.body.name;
-        const surname = req.body.surname;
-        const birthDate = req.body.birthDate;
-        const sex = req.body.sex;
-        const height = req.body.height;
-        const weight = req.body.weight;
-        const email = req.body?.email;
-        const phone = req.body?.phone;
+        const number = req.body.number;
+        const floor = req.body.floor;
+        const department = req.body.department;
+        const purpose = req.body.purpose;
+        const placeCount = req.body.placeCount;
+        let chief = req.body?.chief;
 
-        const doc = new PatientModel({
-            name,
-            surname,
-            birthDate,
-            sex,
-            height,
-            weight,
-            email,
-            phone
+        if (chief !== undefined) {
+            chief = await DoctorModel.findById(chief);
+            if (!chief) {
+                return res.status(404).json({
+                    message: 'Doctor not found'
+                })
+            }
+        }
+
+        const doc = new WardModel({
+            number,
+            floor,
+            department,
+            purpose,
+            placeCount,
+            chief
         })
 
-        const patient = await doc.save();
+        const ward = await doc.save();
 
-        res.json(patient);
-
-    } catch(err) {
-        res.status(500).json({
-            message: 'Error'
-        });
-    }
-}
-
-export const getPatient = async (req, res) => {
-    try {
-        if(req.role !== 'admin' && req.role !== 'patient' && req.role !== 'doctor') {
-            return res.status(403).json({
-                message: 'Access denied!'
-            });
-        }
-
-        const patientId = req.params.id;
-
-        const patient = await PatientModel.findById(patientId);
-        if (!patient) {
-            return res.status(404).json({
-                message: 'Patient not found'
-            });
-        }
-
-        return res.json(patient);
-
-    } catch(err) {
-        res.status(500).json({
-            message: 'Error'
-        });
-    }
-}
-
-export const getMyInfo = async (req, res) => {
-    try {
-        if(req.role !== 'patient') {
-            return res.status(403).json({
-                message: 'Access denied!'
-            });
-        }
-
-        const patientId = req._key;
-        console.log(patientId);
-
-        const patient = await PatientModel.findById(patientId);
-        if (!patient) {
-            return res.status(404).json({
-                message: 'Patient not found'
-            });
-        }
-
-        return res.json(patient);
+        res.json(ward);
 
     } catch(err) {
         console.log(err);
@@ -123,9 +76,35 @@ export const getMyInfo = async (req, res) => {
     }
 }
 
-export const editPatient = async (req, res) => {
+export const getWard = async (req, res) => {
     try {
-        if(req.role !== 'admin' && req.role !== 'doctor' && req.role !== 'patient') {
+        if(req.role !== 'admin' && req.role !== 'doctor') {
+            return res.status(403).json({
+                message: 'Access denied!'
+            });
+        }
+
+        const wardId = req.params.id;
+
+        const ward = await WardModel.findById(wardId);
+        if (!ward) {
+            return res.status(404).json({
+                message: 'Ward not found'
+            });
+        }
+
+        return res.json(ward);
+
+    } catch(err) {
+        res.status(500).json({
+            message: 'Error'
+        });
+    }
+}
+
+export const editWard = async (req, res) => {
+    try {
+        if(req.role !== 'admin') {
             return res.status(403).json({
                 message: 'Access denied!'
             });
@@ -136,11 +115,21 @@ export const editPatient = async (req, res) => {
             return res.status(400).json(errors.array());
         }
 
-        const patientId = req.params.id;
+        const wardId = req.params.id;
 
-        PatientModel.findOneAndUpdate(
+        let chief = req.body?.chief;
+        if (chief !== undefined) {
+            chief = await DoctorModel.findById(chief);
+            if (!chief) {
+                return res.status(404).json({
+                    message: 'Doctor not found'
+                })
+            }
+        }
+
+        WardModel.findOneAndUpdate(
             {
-                _id: patientId
+                _id: wardId
             },
             {
                 ...req.body
@@ -157,7 +146,7 @@ export const editPatient = async (req, res) => {
 
                 if(!doc) {
                     return res.status(404).json({
-                        message: 'Patient not found'
+                        message: 'Ward not found'
                     });
                 }
 
@@ -172,19 +161,19 @@ export const editPatient = async (req, res) => {
     }
 }
 
-export const deletePatient = async (req, res) => {
+export const deleteWard = async (req, res) => {
     try {
-        if(req.role !== 'admin' && req.role !== 'doctor') {
+        if(req.role !== 'admin') {
             return res.status(403).json({
                 message: 'Access denied!'
             });
         }
 
-        const patientId = req.params.id;
+        const wardId = req.params.id;
 
-        PatientModel.findOneAndDelete(
+        WardModel.findOneAndDelete(
             {
-                _id: patientId
+                _id: wardId
             },
             (err, doc) => {
                 if(err) {
@@ -195,7 +184,7 @@ export const deletePatient = async (req, res) => {
 
                 if(!doc) {
                     return res.status(404).json({
-                        message: 'Ptient not found'
+                        message: 'Ward not found'
                     });
                 }
 
@@ -210,20 +199,20 @@ export const deletePatient = async (req, res) => {
     }
 }
 
-export const deleteManyPatients = async (req, res) => {
+export const deleteManyWards = async (req, res) => {
     try {
-        if(req.role !== 'admin' && req.role !== 'doctor') {
+        if(req.role !== 'admin') {
             return res.status(403).json({
                 message: 'Access denied!'
             });
         }
 
-        const patientsId = req.body.patients;
+        const wardsId = req.body.wards;
 
-        PatientModel.deleteMany(
+        WardModel.deleteMany(
             {
                 _id: {
-                    $in: patientsId
+                    $in: wardsId
                 }
             },
             (err, doc) => {
@@ -236,7 +225,7 @@ export const deleteManyPatients = async (req, res) => {
 
                 if(doc.deletedCount === 0) {
                     return res.status(404).json({
-                        message: 'Patients not found'
+                        message: 'Wards not found'
                     });
                 }
 
