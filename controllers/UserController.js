@@ -24,7 +24,7 @@ export const login = async (req, res) => {
                 });
             }
         }
-
+        
         const user = await UserModel.findOne({login: req.body.login, role: req.body.role});
         if (!user) {
             return res.status(404).json({
@@ -39,7 +39,7 @@ export const login = async (req, res) => {
                 message: 'Login fail'
             });
         }
-
+        
         const token = jwt.sign(
             {
                 _id: user._id,

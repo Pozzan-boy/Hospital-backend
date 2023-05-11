@@ -173,7 +173,19 @@ export const deleteDoctor = async (req, res) => {
                     });
                 }
 
-                res.json(doc);
+                UserModel.deleteMany(
+                    {
+                        key: doctorId
+                    },
+                    (err, doc) => {
+                        if(err) {
+                            console.log(err);
+                            return res.status(500).json({
+                                message: 'Error'
+                            });
+                        }
+                })
+                res.status(200).json(doc);
             }
         );
 
@@ -215,7 +227,22 @@ export const deleteManyDoctors = async (req, res) => {
                     });
                 }
 
-                res.json(doc);
+                UserModel.deleteMany(
+                    {
+                        key: {
+                            $in: doctorsId
+                        }
+                    },
+                    (err, doc) => {
+                        if(err) {
+                            console.log(err);
+                            return res.status(500).json({
+                                message: 'Error'
+                            });
+                        }
+                })
+
+                res.status(200).json(doc);
             }
         );
 

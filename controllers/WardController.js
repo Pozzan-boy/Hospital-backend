@@ -10,7 +10,8 @@ export const getAllWards = async (req, res) => {
             });
         }
 
-        const wards = await WardModel.find().skip(req.headers.from).limit(req.headers.count);
+        const wards = await WardModel.find().populate('chief').skip(req.headers.from).limit(req.headers.count);
+        console.log(wards);
 
         if (wards != null && wards.length > 0) {
             return res.status(200).json(wards);
@@ -121,6 +122,7 @@ export const editWard = async (req, res) => {
         if (chief !== undefined) {
             chief = await DoctorModel.findById(chief);
             if (!chief) {
+                
                 return res.status(404).json({
                     message: 'Doctor not found'
                 })
