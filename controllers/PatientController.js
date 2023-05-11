@@ -1,4 +1,5 @@
 import PatientModel from '../models/Patient.js';
+import UserModel from '../models/User.js';
 import { validationResult } from 'express-validator';
 
 export const getAllPatients = async (req, res) => {
@@ -195,15 +196,28 @@ export const deletePatient = async (req, res) => {
 
                 if(!doc) {
                     return res.status(404).json({
-                        message: 'Ptient not found'
+                        message: 'Patient not found'
                     });
                 }
 
-                res.json(doc);
+                UserModel.deleteMany(
+                    {
+                        key: patientId
+                    },
+                    (err, doc) => {
+                        if(err) {
+                            console.log(err);
+                            return res.status(500).json({
+                                message: 'Error'
+                            });
+                        }
+                })
+                res.status(200).json(doc);
             }
         )
 
     } catch(err) {
+        console.log(err);
         res.status(500).json({
             message: 'Error'
         });
@@ -240,7 +254,22 @@ export const deleteManyPatients = async (req, res) => {
                     });
                 }
 
-                res.json(doc);
+                UserModel.deleteMany(
+                    {
+                        key: {
+                            $in: patientsId
+                        }
+                    },
+                    (err, doc) => {
+                        if(err) {
+                            console.log(err);
+                            return res.status(500).json({
+                                message: 'Error'
+                            });
+                        }
+                })
+
+                res.status(200).json(doc);
             }
         );
 

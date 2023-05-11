@@ -54,7 +54,7 @@ app.get('/doctor/checkAccount/:key', checkAuth, UserController.checkDoctorAccoun
 
 app.get('/patient/getAllPatients', checkAuth, PatientController.getAllPatients);
 
-app.post('/patient/add', checkAuth, addPatientValidator, PatientController.addPtient);
+app.post('/patient/add', checkAuth, addPatientValidator, PatientController.addPatient);
 
 app.get('/patient/getInfo', checkAuth, PatientController.getMyInfo);
 
@@ -81,7 +81,7 @@ app.post('/ward/add', checkAuth, addWardValidator, WardController.addWard);
 
 app.get('/ward/:id', checkAuth, WardController.getWard);
 
-app.put('/ward/edit/:id', checkAuth, editWardValidator);
+app.put('/ward/edit/:id', checkAuth, editWardValidator, WardController.editWard);
 
 app.delete('/ward/delete/:id', checkAuth, WardController.deleteWard);
 

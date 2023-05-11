@@ -34,7 +34,8 @@ const WardSchema = new mongoose.Schema({
         required: true
     },
     chief: {
-        type: String,
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Doctor',
         required: false
     }
 },
