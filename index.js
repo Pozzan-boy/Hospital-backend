@@ -58,6 +58,8 @@ app.get('/patient/getAllPatients', checkAuth, PatientController.getAllPatients);
 
 app.post('/patient/add', checkAuth, addPatientValidator, PatientController.addPatient);
 
+app.get('/patient/getHealing', checkAuth, HealingController.getMyHealing);
+
 app.get('/patient/getInfo', checkAuth, PatientController.getMyInfo);
 
 app.get('/patient/:id', checkAuth, PatientController.getPatient);

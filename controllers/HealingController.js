@@ -123,6 +123,34 @@ export const getHealing = async (req, res) => {
     }
 }
 
+export const getMyHealing = async (req, res) => {
+    try {
+        if(req.role !== 'patient') {
+            return res.status(403).json({
+                message: 'Access denied!'
+            });
+        }
+
+        const patientId = req._key;
+        console.log(patientId);
+
+        const healing = await HealingModel.findOne({patient: patientId}).populate(['patient', 'doctor', 'ward']);
+        if (!healing) {
+            return res.status(404).json({
+                message: 'Healing not found'
+            });
+        }
+        console.log(healing);
+        return res.json(healing);
+
+    } catch(err) {
+        console.log(err);
+        res.status(500).json({
+            message: 'Error'
+        });
+    }
+}
+
 export const editHealing = async (req, res) => {
     try {
         if(req.role !== 'admin' && req.role !== 'doctor') {
@@ -176,7 +204,7 @@ export const editHealing = async (req, res) => {
             },
             {
                 returnDocument: 'after'
-            },
+            }).populate(['patient', 'doctor', 'ward']).exec(
             (err, doc) => {
                 if(err) {
                     return res.status(500).json({

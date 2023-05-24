@@ -3,7 +3,7 @@ import { validationResult } from 'express-validator';
 
 export const getAllDoctors = async (req, res) => {
     try {
-        if(req.role !== 'admin') {
+        if(req.role !== 'admin' && req.role !== 'doctor') {
             return res.status(403).json({
                 message: 'Access denied!'
             });
