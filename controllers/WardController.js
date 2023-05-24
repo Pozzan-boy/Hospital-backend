@@ -138,7 +138,7 @@ export const editWard = async (req, res) => {
             },
             {
                 returnDocument: 'after'
-            },
+            }).populate('chief').exec(
             (err, doc) => {
                 if(err) {
                     return res.status(500).json({
@@ -154,7 +154,7 @@ export const editWard = async (req, res) => {
 
                 res.json(doc);
             }
-        )
+            )
 
     } catch(err) {
         res.status(500).json({
