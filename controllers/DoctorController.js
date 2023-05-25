@@ -96,6 +96,40 @@ export const getDoctor = async (req, res) => {
     }
 }
 
+export const searchDoctors = async (req, res) => {
+    try {
+        if(req.role !== 'admin') {
+            return res.status(403).json({
+                message: 'Access denied!'
+            });
+        }
+
+        const key = Object.keys(req.body)[0];
+        if (typeof(req.body[key]) !== 'number') {
+            req.body[key] = {
+                '$regex' : req.body[key], 
+                '$options' : 'i'
+            }
+        }
+        
+        const doctors = await DoctorModel.find(req.body)
+
+        if (!doctors || doctors.length === 0) {
+            return res.status(404).json({
+                message: 'Doctors not found'
+            })
+        }
+
+        return res.json(doctors);
+
+    } catch(err) {
+        console.log(err);
+        res.status(500).json({
+            message: 'Error'
+        });
+    }
+}
+
 export const editDoctor = async (req, res) => {
     try {
         if(req.role !== 'admin' && req.role !== 'doctor') {

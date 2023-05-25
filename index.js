@@ -37,6 +37,8 @@ app.get('/doctor/getAllDoctors', checkAuth, DoctorController.getAllDoctors);
 
 app.post('/doctor/add', checkAuth, addDoctorValidator, DoctorController.addDoctor);
 
+app.get('/doctor/find', checkAuth, DoctorController.searchDoctors);
+
 app.get('/doctor/:id', checkAuth, DoctorController.getDoctor);
 
 app.put('/doctor/edit/:id', checkAuth, editDoctorValidator, DoctorController.editDoctor);
