@@ -106,18 +106,16 @@ export const searchDoctors = async (req, res) => {
 
         const numTypes =["age", "salary" , "height", "weight", "placeCount", "number", "floor"];
         const key = Object.keys(req.query)[0];
-        if (typeof(req.query[key]) !== 'number') {
-            if (numTypes.indexOf(key) !== -1) {
-                req.query[key] = +req.query[key]
-            } else {
-                req.query[key] = {
-                    '$regex' : req.query[key], 
-                    '$options' : 'i'
-                }
+        if (numTypes.indexOf(key) !== -1) {
+            req.query[key] = +req.query[key]
+        } else {
+            req.query[key] = {
+                '$regex' : req.query[key], 
+                '$options' : 'i'
             }
         }
         
-        const doctors = await DoctorModel.find(req.body)
+        const doctors = await DoctorModel.find(req.query);
 
         if (!doctors || doctors.length === 0) {
             return res.status(404).json({
