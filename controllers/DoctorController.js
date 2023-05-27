@@ -104,11 +104,16 @@ export const searchDoctors = async (req, res) => {
             });
         }
 
+        const numTypes =["age", "salary" , "height", "weight", "placeCount", "number", "floor"];
         const key = Object.keys(req.body)[0];
         if (typeof(req.body[key]) !== 'number') {
-            req.body[key] = {
-                '$regex' : req.body[key], 
-                '$options' : 'i'
+            if (numTypes.indexOf(key) !== -1) {
+                req.body[key] = +req.body[key]
+            } else {
+                req.body[key] = {
+                    '$regex' : req.body[key], 
+                    '$options' : 'i'
+                }
             }
         }
         
