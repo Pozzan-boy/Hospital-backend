@@ -103,6 +103,43 @@ export const getWard = async (req, res) => {
     }
 }
 
+export const searchWards = async (req, res) => {
+    try {
+        if(req.role !== 'admin' && req.role !== 'doctor') {
+            return res.status(403).json({
+                message: 'Access denied!'
+            });
+        }
+
+        const numTypes =["age", "salary" , "height", "weight", "placeCount", "number", "floor"];
+        const key = Object.keys(req.query)[0];
+        if (numTypes.indexOf(key) !== -1) {
+            req.query[key] = +req.query[key]
+        } else {
+            req.query[key] = {
+                '$regex' : req.query[key], 
+                '$options' : 'i'
+            }
+        }
+        
+        const wards = await WardModel.find(req.query);
+
+        if (!wards || wards.length === 0) {
+            return res.status(404).json({
+                message: 'Wards not found'
+            })
+        }
+
+        return res.json(wards);
+
+    } catch(err) {
+        console.log(err);
+        res.status(500).json({
+            message: 'Error'
+        });
+    }
+}
+
 export const editWard = async (req, res) => {
     try {
         if(req.role !== 'admin') {

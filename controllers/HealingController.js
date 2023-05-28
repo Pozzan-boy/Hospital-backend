@@ -151,6 +151,43 @@ export const getMyHealing = async (req, res) => {
     }
 }
 
+export const searchHealings = async (req, res) => {
+    try {
+        if(req.role !== 'admin' && req.role !== 'doctor') {
+            return res.status(403).json({
+                message: 'Access denied!'
+            });
+        }
+
+        const numTypes =["age", "salary" , "height", "weight", "placeCount", "number", "floor"];
+        const key = Object.keys(req.query)[0];
+        if (numTypes.indexOf(key) !== -1) {
+            req.query[key] = +req.query[key]
+        } else {
+            req.query[key] = {
+                '$regex' : req.query[key], 
+                '$options' : 'i'
+            }
+        }
+        
+        const healings = await HealingModel.find(req.query);
+
+        if (!healings || healings.length === 0) {
+            return res.status(404).json({
+                message: 'Healings not found'
+            })
+        }
+
+        return res.json(healings);
+
+    } catch(err) {
+        console.log(err);
+        res.status(500).json({
+            message: 'Error'
+        });
+    }
+}
+
 export const editHealing = async (req, res) => {
     try {
         if(req.role !== 'admin' && req.role !== 'doctor') {

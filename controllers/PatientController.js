@@ -124,6 +124,43 @@ export const getMyInfo = async (req, res) => {
     }
 }
 
+export const searchPatients = async (req, res) => {
+    try {
+        if(req.role !== 'admin' && req.role !== 'doctor') {
+            return res.status(403).json({
+                message: 'Access denied!'
+            });
+        }
+
+        const numTypes =["age", "salary" , "height", "weight", "placeCount", "number", "floor"];
+        const key = Object.keys(req.query)[0];
+        if (numTypes.indexOf(key) !== -1) {
+            req.query[key] = +req.query[key]
+        } else {
+            req.query[key] = {
+                '$regex' : req.query[key], 
+                '$options' : 'i'
+            }
+        }
+        
+        const patients = await PatientModel.find(req.query);
+
+        if (!patients || patients.length === 0) {
+            return res.status(404).json({
+                message: 'Patients not found'
+            })
+        }
+
+        return res.json(patients);
+
+    } catch(err) {
+        console.log(err);
+        res.status(500).json({
+            message: 'Error'
+        });
+    }
+}
+
 export const editPatient = async (req, res) => {
     try {
         if(req.role !== 'admin' && req.role !== 'doctor' && req.role !== 'patient') {
