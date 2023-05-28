@@ -64,6 +64,8 @@ app.get('/patient/getHealing', checkAuth, HealingController.getMyHealing);
 
 app.get('/patient/getInfo', checkAuth, PatientController.getMyInfo);
 
+app.get('/patient/find', checkAuth, PatientController.searchPatients);
+
 app.get('/patient/:id', checkAuth, PatientController.getPatient);
 
 app.put('/patient/edit/:id', checkAuth, editPatientValidator, PatientController.editPatient);
@@ -85,6 +87,8 @@ app.get('/ward/getAllWards', checkAuth, WardController.getAllWards);
 
 app.post('/ward/add', checkAuth, addWardValidator, WardController.addWard);
 
+app.get('/ward/find', checkAuth, WardController.searchWards);
+
 app.get('/ward/:id', checkAuth, WardController.getWard);
 
 app.put('/ward/edit/:id', checkAuth, editWardValidator, WardController.editWard);
@@ -99,6 +103,8 @@ app.delete('/ward/deleteMany', checkAuth, WardController.deleteManyWards);
 app.get('/healing/getAllHealings', checkAuth, HealingController.getAllHealings);
 
 app.post('/healing/add', checkAuth, addHealingValidator, HealingController.addHealing);
+
+app.get('/healing/find', checkAuth, HealingController.searchHealings);
 
 app.get('/healing/:id', checkAuth, HealingController.getHealing);
 
